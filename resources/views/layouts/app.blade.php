@@ -1,36 +1,123 @@
+
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+    <title>
+        @yield('title', 'Sistema de Citas Médicas')
+    </title>
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+    @stack('styles')
+</head>
+
+<body class="app-body">
+
+    <div class="app-container">
+
+        {{-- Barra lateral --}}
+        @include('components.sidebar')
+
+        <div class="main-container">
+
+            {{-- Barra superior --}}
+            @include('components.navbar')
+
+            <main class="main-content">
+
+                {{-- Mensaje de éxito --}}
+                @if(session('success'))
+                    <div
+                        class="alert alert-success"
+                        role="alert"
+                        aria-live="polite"
+                    >
+                        <span
+                            class="alert-icon"
+                            aria-hidden="true"
+                        >
+                            ✓
+                        </span>
+
+                        <div>
+                            {{ session('success') }}
+                        </div>
                     </div>
-                </header>
-            @endif
+                @endif
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
+                {{-- Mensaje de error --}}
+                @if(session('error'))
+                    <div
+                        class="alert alert-error"
+                        role="alert"
+                        aria-live="assertive"
+                    >
+                        <span
+                            class="alert-icon"
+                            aria-hidden="true"
+                        >
+                            !
+                        </span>
+
+                        <div>
+                            {{ session('error') }}
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Errores de validación --}}
+                @if($errors->any())
+                    <div
+                        class="alert alert-error"
+                        role="alert"
+                        aria-live="assertive"
+                    >
+                        <span
+                            class="alert-icon"
+                            aria-hidden="true"
+                        >
+                            !
+                        </span>
+
+                        <div>
+                            <strong>
+                                Revisa la información ingresada.
+                            </strong>
+
+                            <ul class="alert-list">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Contenido principal --}}
+                @yield('content')
+
             </main>
+
         </div>
-    </body>
+
+    </div>
+
+    <script src="{{ asset('js/app.js') }}"></script>
+
+    @stack('scripts')
+
+</body>
 </html>
+
